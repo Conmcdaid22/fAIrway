@@ -6,201 +6,372 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="fAIrway">
-<meta name="theme-color" content="#1a3a2a">
+<meta name="theme-color" content="#070e0a">
 <title>fAIrway – Smart Club Selection</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --green-deep: #1a3a2a;
-    --green-mid: #2d5a3d;
-    --green-light: #4a8c5c;
-    --green-bright: #6ab87a;
-    --gold: #c9a84c;
-    --gold-light: #e8c97a;
-    --cream: #f5f0e8;
-    --dark: #0d1f16;
-    --text-muted: #8aab94;
-    --card-bg: rgba(255,255,255,0.05);
-    --card-border: rgba(201,168,76,0.2);
-    --safe-top: env(safe-area-inset-top, 0px);
+    --bg:          #070e0a;
+    --bg2:         #0d1a12;
+    --bg3:         #111f16;
+    --green-mid:   #1e3d28;
+    --green-light: #2d5c3a;
+    --green-bright:#5aab6e;
+    --gold:        #c9a84c;
+    --gold-light:  #e8c97a;
+    --gold-dim:    rgba(201,168,76,0.18);
+    --cream:       #e8e2d4;
+    --cream-dim:   #a09880;
+    --dark:        #070e0a;
+    --card-bg:     rgba(255,255,255,0.03);
+    --card-border: rgba(201,168,76,0.18);
+    --safe-top:    env(safe-area-inset-top, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body { height: 100%; overscroll-behavior: none; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--green-deep); color: var(--cream); min-height: 100vh; overflow-x: hidden; }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { height:100%; overscroll-behavior:none; }
+  body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--cream); min-height:100vh; overflow-x:hidden; }
+
   body::before {
-    content: ''; position: fixed; inset: 0;
-    background-image:
-      radial-gradient(ellipse at 20% 50%, rgba(74,140,92,0.15) 0%, transparent 60%),
-      radial-gradient(ellipse at 80% 20%, rgba(201,168,76,0.08) 0%, transparent 50%),
-      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none; z-index: 0;
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:
+      radial-gradient(ellipse at 15% 40%, rgba(45,92,58,0.18) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 15%, rgba(201,168,76,0.06) 0%, transparent 45%),
+      radial-gradient(ellipse at 60% 90%, rgba(26,61,40,0.2) 0%, transparent 50%);
   }
-  .screen { display: none; min-height: 100vh; position: relative; z-index: 1; }
-  .screen.active { display: flex; flex-direction: column; }
 
-  /* ── LOGIN ── */
-  #loginScreen { align-items: center; justify-content: center; padding: 2rem 1.5rem; padding-top: calc(2rem + var(--safe-top)); }
-  .logo-wrap { text-align: center; margin-bottom: 3rem; animation: fadeDown 0.8s ease both; }
-  .logo-icon { width: 110px; height: 110px; margin: 0 auto 1.5rem; }
-  .logo-icon svg { width: 100%; height: 100%; }
-  .logo-title { font-family: 'Playfair Display', serif; font-size: 3.2rem; font-weight: 900; letter-spacing: -1px; line-height: 1; }
-  .logo-title .f { color: var(--gold); font-style: italic; }
-  .logo-title .ai { color: var(--green-bright); font-size: 2rem; vertical-align: super; font-weight: 700; }
-  .logo-title .rway { color: var(--cream); }
-  .logo-tagline { color: var(--text-muted); font-size: 0.85rem; letter-spacing: 3px; text-transform: uppercase; margin-top: 0.5rem; font-weight: 500; }
-  .login-card { background: rgba(255,255,255,0.04); border: 1px solid var(--card-border); border-radius: 20px; padding: 2.5rem 2rem; width: 100%; max-width: 400px; backdrop-filter: blur(10px); animation: fadeUp 0.8s ease 0.2s both; }
-  .login-card h2 { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--gold); margin-bottom: 0.3rem; }
-  .login-card p { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.8rem; }
-  .player-btn { width: 100%; padding: 1.1rem 1.5rem; border-radius: 14px; border: 1px solid var(--card-border); background: var(--card-bg); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem; transition: all 0.25s ease; text-align: left; touch-action: manipulation; }
-  .player-btn:hover, .player-btn:active { background: rgba(201,168,76,0.12); border-color: var(--gold); transform: translateX(4px); }
-  .player-btn .avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 700; flex-shrink: 0; font-family: 'Playfair Display', serif; }
-  .player-btn .info { flex: 1; }
-  .player-btn .info span { display: block; }
-  .player-btn .info .name { font-weight: 600; font-size: 1rem; }
-  .player-btn .info .role { font-size: 0.78rem; color: var(--text-muted); }
-  .player-btn .chevron { color: var(--gold); opacity: 0.6; font-size: 1.2rem; }
+  .screen { display:none; min-height:100vh; position:relative; z-index:1; }
+  .screen.active { display:flex; flex-direction:column; }
 
-  /* ── TOP BAR ── */
-  #appScreen { flex-direction: column; }
-  .top-bar { padding: 1rem 1.5rem; padding-top: calc(1rem + var(--safe-top)); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(201,168,76,0.15); background: rgba(13,31,22,0.7); backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 100; }
-  .top-logo { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 900; }
-  .top-logo .f { color: var(--gold); font-style: italic; }
-  .top-logo .ai { color: var(--green-bright); font-size: 1rem; vertical-align: super; }
-  .top-logo .rway { color: var(--cream); }
-  .top-right { display: flex; align-items: center; gap: 0.6rem; }
-  .player-chip { display: flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.06); border: 1px solid var(--card-border); border-radius: 20px; padding: 0.35rem 0.8rem; font-size: 0.82rem; font-weight: 500; }
-  .player-chip .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .icon-btn { background: rgba(255,255,255,0.06); border: 1px solid var(--card-border); color: var(--text-muted); font-size: 1rem; cursor: pointer; padding: 0.35rem 0.6rem; border-radius: 10px; transition: all 0.2s; font-family: 'DM Sans', sans-serif; touch-action: manipulation; }
-  .icon-btn:hover { color: var(--gold); border-color: var(--gold); }
-  .logout-btn { background: none; border: none; color: var(--text-muted); font-size: 0.8rem; cursor: pointer; padding: 0.35rem 0.5rem; border-radius: 8px; transition: color 0.2s; font-family: 'DM Sans', sans-serif; }
-  .logout-btn:hover { color: var(--gold); }
+  /* ════════════════════════════
+     PIN SCREEN
+  ════════════════════════════ */
+  #pinScreen {
+    align-items:center; justify-content:center;
+    padding:2rem 1.5rem;
+    padding-top:calc(3rem + var(--safe-top));
+    min-height:100vh;
+  }
+
+  .pin-logo-wrap { text-align:center; margin-bottom:2.5rem; animation:fadeDown 0.7s ease both; }
+
+  /* NEW LOGO */
+  .logo-lockup { display:inline-flex; flex-direction:column; align-items:center; gap:0; }
+
+  .logo-text-row { display:flex; align-items:baseline; gap:0; line-height:1; }
+  .lt-f    { font-family:'Playfair Display',serif; font-size:3.6rem; font-weight:900; font-style:italic; color:var(--gold); letter-spacing:-2px; }
+  .lt-ai   { font-family:'Playfair Display',serif; font-size:1.6rem; font-weight:700; color:var(--green-bright); letter-spacing:1px; vertical-align:super; line-height:1; }
+  .lt-rway { font-family:'Playfair Display',serif; font-size:3.6rem; font-weight:900; color:var(--cream); letter-spacing:-2px; }
+
+  /* Shot trace SVG underline */
+  .logo-trace { width:260px; height:38px; margin-top:2px; }
+
+  .logo-tagline { color:var(--cream-dim); font-size:0.75rem; letter-spacing:4px; text-transform:uppercase; margin-top:0.6rem; font-weight:500; }
+
+  /* PIN CARD */
+  .pin-card {
+    background:rgba(255,255,255,0.03);
+    border:1px solid var(--card-border);
+    border-radius:22px;
+    padding:2rem 1.8rem 2.2rem;
+    width:100%; max-width:340px;
+    backdrop-filter:blur(16px);
+    animation:fadeUp 0.7s ease 0.15s both;
+    text-align:center;
+  }
+
+  .pin-player-name {
+    font-family:'Playfair Display',serif;
+    font-size:1.3rem; color:var(--gold);
+    margin-bottom:0.25rem;
+  }
+  .pin-sub { color:var(--cream-dim); font-size:0.82rem; margin-bottom:1.6rem; }
+
+  .pin-dots { display:flex; justify-content:center; gap:0.8rem; margin-bottom:1.6rem; }
+  .pin-dot {
+    width:14px; height:14px; border-radius:50%;
+    border:2px solid rgba(201,168,76,0.4);
+    background:transparent;
+    transition:all 0.2s;
+  }
+  .pin-dot.filled { background:var(--gold); border-color:var(--gold); box-shadow:0 0 8px rgba(201,168,76,0.5); }
+  .pin-dot.error  { background:#ef4444; border-color:#ef4444; }
+
+  .pin-pad { display:grid; grid-template-columns:repeat(3,1fr); gap:0.7rem; margin-bottom:0.8rem; }
+  .pin-key {
+    aspect-ratio:1; border-radius:14px;
+    border:1px solid rgba(255,255,255,0.08);
+    background:rgba(255,255,255,0.05);
+    color:var(--cream); font-family:'DM Sans',sans-serif;
+    font-size:1.4rem; font-weight:500;
+    cursor:pointer; transition:all 0.15s;
+    display:flex; align-items:center; justify-content:center;
+    touch-action:manipulation; user-select:none;
+  }
+  .pin-key:hover, .pin-key:active { background:rgba(201,168,76,0.15); border-color:var(--gold); color:var(--gold); transform:scale(0.95); }
+  .pin-key.del { font-size:1.1rem; }
+  .pin-key.zero { grid-column:2; }
+
+  .pin-back-btn {
+    background:none; border:none; color:var(--cream-dim);
+    font-family:'DM Sans',sans-serif; font-size:0.82rem;
+    cursor:pointer; padding:0.4rem; margin-top:0.4rem;
+    transition:color 0.2s;
+  }
+  .pin-back-btn:hover { color:var(--gold); }
+  .pin-shake { animation:shake 0.4s ease; }
+  @keyframes shake {
+    0%,100% { transform:translateX(0); }
+    20%      { transform:translateX(-8px); }
+    40%      { transform:translateX(8px); }
+    60%      { transform:translateX(-6px); }
+    80%      { transform:translateX(6px); }
+  }
+
+  /* ════════════════════════════
+     LOGIN (player select)
+  ════════════════════════════ */
+  #loginScreen { align-items:center; justify-content:center; padding:2rem 1.5rem; padding-top:calc(2rem + var(--safe-top)); }
+
+  .login-logo-wrap { text-align:center; margin-bottom:2.8rem; animation:fadeDown 0.8s ease both; }
+
+  .login-card {
+    background:rgba(255,255,255,0.03);
+    border:1px solid var(--card-border);
+    border-radius:22px; padding:2.2rem 1.8rem;
+    width:100%; max-width:400px;
+    backdrop-filter:blur(12px);
+    animation:fadeUp 0.8s ease 0.2s both;
+  }
+  .login-card h2 { font-family:'Playfair Display',serif; font-size:1.35rem; color:var(--gold); margin-bottom:0.3rem; }
+  .login-card p { color:var(--cream-dim); font-size:0.84rem; margin-bottom:1.8rem; }
+
+  .player-btn {
+    width:100%; padding:1rem 1.3rem;
+    border-radius:14px; border:1px solid var(--card-border);
+    background:var(--card-bg); color:var(--cream);
+    font-family:'DM Sans',sans-serif; font-size:1rem; font-weight:500;
+    cursor:pointer; display:flex; align-items:center; gap:1rem;
+    margin-bottom:0.8rem; transition:all 0.22s ease;
+    text-align:left; touch-action:manipulation;
+  }
+  .player-btn:hover,.player-btn:active { background:rgba(201,168,76,0.1); border-color:var(--gold); transform:translateX(4px); }
+  .player-btn .avatar { width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem; font-weight:700; flex-shrink:0; font-family:'Playfair Display',serif; }
+  .player-btn .info { flex:1; }
+  .player-btn .info span { display:block; }
+  .player-btn .info .name { font-weight:600; font-size:0.97rem; }
+  .player-btn .info .role { font-size:0.76rem; color:var(--cream-dim); }
+  .player-btn .chevron { color:var(--gold); opacity:0.5; font-size:1.2rem; }
+
+  /* ════════════════════════════
+     APP SHELL
+  ════════════════════════════ */
+  #appScreen { flex-direction:column; }
+
+  .top-bar {
+    padding:0.9rem 1.4rem;
+    padding-top:calc(0.9rem + var(--safe-top));
+    display:flex; align-items:center; justify-content:space-between;
+    border-bottom:1px solid rgba(201,168,76,0.12);
+    background:rgba(7,14,10,0.85); backdrop-filter:blur(14px);
+    position:sticky; top:0; z-index:100;
+  }
+  .top-logo { font-family:'Playfair Display',serif; font-size:1.45rem; font-weight:900; }
+  .top-logo .f    { color:var(--gold); font-style:italic; }
+  .top-logo .ai   { color:var(--green-bright); font-size:0.9rem; vertical-align:super; }
+  .top-logo .rway { color:var(--cream); }
+
+  .top-right { display:flex; align-items:center; gap:0.55rem; }
+  .player-chip { display:flex; align-items:center; gap:0.45rem; background:rgba(255,255,255,0.05); border:1px solid var(--card-border); border-radius:20px; padding:0.3rem 0.75rem; font-size:0.8rem; font-weight:500; }
+  .player-chip .dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+  .icon-btn { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); color:var(--cream-dim); font-size:0.95rem; cursor:pointer; padding:0.32rem 0.55rem; border-radius:9px; transition:all 0.2s; font-family:'DM Sans',sans-serif; touch-action:manipulation; }
+  .icon-btn:hover { color:var(--gold); border-color:var(--gold); }
+  .logout-btn { background:none; border:none; color:var(--cream-dim); font-size:0.78rem; cursor:pointer; padding:0.3rem 0.45rem; border-radius:7px; transition:color 0.2s; font-family:'DM Sans',sans-serif; }
+  .logout-btn:hover { color:var(--gold); }
 
   /* ── TABS ── */
-  .main-content { flex: 1; padding: 1.5rem; padding-bottom: calc(1.5rem + var(--safe-bottom)); max-width: 600px; margin: 0 auto; width: 100%; }
-  .tabs { display: flex; gap: 0.4rem; margin-bottom: 1.6rem; background: rgba(0,0,0,0.2); border-radius: 14px; padding: 0.3rem; }
-  .tab-btn { flex: 1; padding: 0.6rem 0.4rem; border: none; border-radius: 10px; background: transparent; color: var(--text-muted); font-family: 'DM Sans', sans-serif; font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.3rem; touch-action: manipulation; }
-  .tab-btn.active { background: var(--green-mid); color: var(--cream); box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+  .main-content { flex:1; padding:1.4rem; padding-bottom:calc(1.4rem + var(--safe-bottom)); max-width:600px; margin:0 auto; width:100%; }
+  .tabs { display:flex; gap:0.4rem; margin-bottom:1.5rem; background:rgba(0,0,0,0.35); border-radius:13px; padding:0.28rem; }
+  .tab-btn { flex:1; padding:0.58rem 0.4rem; border:none; border-radius:9px; background:transparent; color:var(--cream-dim); font-family:'DM Sans',sans-serif; font-size:0.8rem; font-weight:500; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; justify-content:center; gap:0.3rem; touch-action:manipulation; }
+  .tab-btn.active { background:var(--green-mid); color:var(--cream); box-shadow:0 2px 10px rgba(0,0,0,0.4); }
 
-  /* ── SHARED FORM STYLES ── */
-  .section-title { font-family: 'Playfair Display', serif; font-size: 1.25rem; color: var(--gold); margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.6rem; }
-  .section-sub { font-size: 0.82rem; color: var(--text-muted); margin-top: -0.8rem; margin-bottom: 1.2rem; line-height: 1.5; }
-  .field-group { margin-bottom: 1.2rem; }
-  .field-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); margin-bottom: 0.5rem; display: block; }
-  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
-  .input-wrap { position: relative; display: flex; align-items: center; }
-  .input-wrap .unit { position: absolute; right: 0.9rem; color: var(--text-muted); font-size: 0.8rem; pointer-events: none; }
-  input[type="number"], select { width: 100%; padding: 0.82rem 2.5rem 0.82rem 1rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(201,168,76,0.2); border-radius: 12px; color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 1rem; outline: none; transition: border-color 0.2s, background 0.2s; -webkit-appearance: none; }
-  select { padding-right: 2.5rem; }
-  input[type="number"]:focus, select:focus { border-color: var(--gold); background: rgba(201,168,76,0.06); }
-  input[type="number"]::placeholder { color: var(--text-muted); }
-  select option { background: var(--green-deep); color: var(--cream); }
-  .toggle-group { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-  .toggle-pill { padding: 0.5rem 1rem; border-radius: 20px; border: 1px solid rgba(201,168,76,0.25); background: transparent; color: var(--text-muted); font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: all 0.2s; touch-action: manipulation; }
-  .toggle-pill.active { background: var(--gold); color: var(--dark); border-color: var(--gold); font-weight: 600; }
-  .toggle-pill:hover:not(.active), .toggle-pill:active:not(.active) { border-color: var(--gold); color: var(--cream); }
+  /* ── FORM ── */
+  .section-title { font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--gold); margin-bottom:1.1rem; display:flex; align-items:center; gap:0.55rem; }
+  .section-sub { font-size:0.81rem; color:var(--cream-dim); margin-top:-0.7rem; margin-bottom:1.1rem; line-height:1.5; }
+  .field-group { margin-bottom:1.1rem; }
+  .field-label { font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:1.5px; color:var(--cream-dim); margin-bottom:0.45rem; display:block; }
+  .field-row { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; }
+  .input-wrap { position:relative; display:flex; align-items:center; }
+  .input-wrap .unit { position:absolute; right:0.85rem; color:var(--cream-dim); font-size:0.78rem; pointer-events:none; }
 
-  /* ── BAG SETUP ── */
-  .bag-intro { background: rgba(201,168,76,0.07); border: 1px solid var(--card-border); border-radius: 14px; padding: 1rem 1.1rem; margin-bottom: 1.4rem; font-size: 0.85rem; color: var(--cream); line-height: 1.55; }
-  .bag-intro strong { color: var(--gold); }
-  .club-row { display: grid; grid-template-columns: 1fr auto; gap: 0.6rem; align-items: center; padding: 0.55rem 0.8rem; border-radius: 10px; background: rgba(255,255,255,0.03); border: 1px solid transparent; margin-bottom: 0.4rem; transition: border-color 0.2s; }
-  .club-row:focus-within { border-color: rgba(201,168,76,0.3); background: rgba(201,168,76,0.04); }
-  .club-row-label { font-size: 0.88rem; font-weight: 500; color: var(--cream); }
-  .club-row-label .club-emoji { margin-right: 0.4rem; }
-  .club-yds-input { width: 80px; padding: 0.45rem 0.5rem; background: rgba(255,255,255,0.07); border: 1px solid rgba(201,168,76,0.2); border-radius: 9px; color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 0.9rem; text-align: center; outline: none; transition: border-color 0.2s; -webkit-appearance: none; }
-  .club-yds-input:focus { border-color: var(--gold); }
-  .club-yds-input::placeholder { color: var(--text-muted); font-size: 0.78rem; }
-  .save-bag-btn { width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--gold), var(--gold-light)); border: none; border-radius: 14px; color: var(--dark); font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; cursor: pointer; margin-top: 0.8rem; transition: all 0.25s; touch-action: manipulation; }
-  .save-bag-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,168,76,0.35); }
-  .bag-saved-badge { display: none; align-items: center; gap: 0.5rem; background: rgba(106,184,122,0.12); border: 1px solid rgba(106,184,122,0.35); border-radius: 10px; padding: 0.6rem 0.9rem; margin-bottom: 1rem; font-size: 0.83rem; color: var(--green-bright); font-weight: 500; }
-  .bag-saved-badge.show { display: flex; }
+  input[type="number"], select {
+    width:100%; padding:0.8rem 2.4rem 0.8rem 0.95rem;
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(201,168,76,0.16);
+    border-radius:11px; color:var(--cream);
+    font-family:'DM Sans',sans-serif; font-size:0.97rem;
+    outline:none; transition:border-color 0.2s,background 0.2s;
+    -webkit-appearance:none;
+  }
+  select { padding-right:2.4rem; }
+  input[type="number"]:focus,select:focus { border-color:var(--gold); background:rgba(201,168,76,0.05); }
+  input[type="number"]::placeholder { color:rgba(160,152,128,0.5); }
+  select option { background:var(--bg2); color:var(--cream); }
 
-  /* ── ADVISOR ── */
-  .recommend-btn { width: 100%; padding: 1.1rem; background: linear-gradient(135deg, var(--gold), var(--gold-light)); border: none; border-radius: 14px; color: var(--dark); font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; cursor: pointer; margin-top: 0.5rem; transition: all 0.25s; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; touch-action: manipulation; }
-  .recommend-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,168,76,0.35); }
-  .recommend-btn:active { transform: translateY(0); opacity: 0.9; }
-  .no-bag-warning { background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.3); border-radius: 12px; padding: 0.9rem 1rem; margin-top: 1rem; font-size: 0.85rem; color: var(--gold); display: none; line-height: 1.5; }
-  .no-bag-warning.show { display: block; }
-  .no-bag-warning button { background: none; border: none; color: var(--gold); font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 700; cursor: pointer; text-decoration: underline; padding: 0; }
+  .toggle-group { display:flex; gap:0.45rem; flex-wrap:wrap; }
+  .toggle-pill { padding:0.48rem 0.95rem; border-radius:20px; border:1px solid rgba(201,168,76,0.2); background:transparent; color:var(--cream-dim); font-family:'DM Sans',sans-serif; font-size:0.8rem; font-weight:500; cursor:pointer; transition:all 0.18s; touch-action:manipulation; }
+  .toggle-pill.active { background:var(--gold); color:var(--dark); border-color:var(--gold); font-weight:700; }
+  .toggle-pill:hover:not(.active),.toggle-pill:active:not(.active) { border-color:var(--gold); color:var(--cream); }
 
-  /* ── RESULT ── */
-  .result-card { margin-top: 1.5rem; background: rgba(26,58,42,0.9); border: 1px solid var(--gold); border-radius: 20px; padding: 1.8rem; display: none; }
-  .result-card.show { display: block; animation: resultPop 0.5s cubic-bezier(0.175,0.885,0.32,1.275) both; }
-  @keyframes resultPop { from { opacity: 0; transform: scale(0.92) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-  .result-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; }
-  .result-header h3 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); font-weight: 600; }
-  .confidence-badge { font-size: 0.75rem; padding: 0.25rem 0.7rem; border-radius: 10px; font-weight: 600; }
-  .conf-high { background: rgba(106,184,122,0.2); color: var(--green-bright); border: 1px solid rgba(106,184,122,0.4); }
-  .conf-mid  { background: rgba(201,168,76,0.2); color: var(--gold); border: 1px solid rgba(201,168,76,0.4); }
-  .primary-club { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.2rem; }
-  .club-icon { width: 64px; height: 64px; background: linear-gradient(135deg, var(--green-mid), var(--green-light)); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 2rem; flex-shrink: 0; }
-  .club-name { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 900; color: var(--gold); line-height: 1; }
-  .club-subtitle { color: var(--text-muted); font-size: 0.85rem; margin-top: 0.2rem; }
-  .result-divider { height: 1px; background: rgba(201,168,76,0.2); margin: 1rem 0; }
-  .result-tip { font-size: 0.9rem; line-height: 1.65; color: #c8ddd0; padding: 0.8rem; background: rgba(255,255,255,0.03); border-radius: 10px; border-left: 3px solid var(--gold); }
-  .alt-clubs { margin-top: 1rem; }
-  .alt-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); margin-bottom: 0.6rem; }
-  .alt-pills { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-  .alt-pill { padding: 0.35rem 0.9rem; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; font-size: 0.82rem; color: var(--cream); }
+  .recommend-btn { width:100%; padding:1.05rem; background:linear-gradient(135deg,var(--gold),var(--gold-light)); border:none; border-radius:13px; color:var(--dark); font-family:'Playfair Display',serif; font-size:1.05rem; font-weight:700; cursor:pointer; margin-top:0.4rem; transition:all 0.22s; letter-spacing:0.4px; display:flex; align-items:center; justify-content:center; gap:0.5rem; touch-action:manipulation; }
+  .recommend-btn:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(201,168,76,0.28); }
+  .recommend-btn:active { transform:translateY(0); opacity:0.9; }
 
-  /* ── TOAST ── */
-  .toast { position: fixed; bottom: calc(2rem + var(--safe-bottom)); left: 50%; transform: translateX(-50%) translateY(100px); background: var(--green-mid); border: 1px solid var(--gold); color: var(--cream); padding: 0.8rem 1.5rem; border-radius: 12px; font-size: 0.88rem; font-weight: 500; z-index: 999; transition: transform 0.3s cubic-bezier(0.175,0.885,0.32,1.275); white-space: nowrap; }
-  .toast.show { transform: translateX(-50%) translateY(0); }
+  /* BAG */
+  .bag-intro { background:rgba(201,168,76,0.06); border:1px solid var(--card-border); border-radius:13px; padding:0.9rem 1rem; margin-bottom:1.3rem; font-size:0.84rem; color:var(--cream); line-height:1.55; }
+  .bag-intro strong { color:var(--gold); }
+  .club-row { display:grid; grid-template-columns:1fr auto; gap:0.6rem; align-items:center; padding:0.52rem 0.75rem; border-radius:9px; background:rgba(255,255,255,0.025); border:1px solid transparent; margin-bottom:0.35rem; transition:border-color 0.2s; }
+  .club-row:focus-within { border-color:rgba(201,168,76,0.28); background:rgba(201,168,76,0.04); }
+  .club-row-label { font-size:0.86rem; font-weight:500; color:var(--cream); }
+  .club-emoji { margin-right:0.35rem; }
+  .club-yds-input { width:78px; padding:0.42rem 0.45rem; background:rgba(255,255,255,0.06); border:1px solid rgba(201,168,76,0.18); border-radius:8px; color:var(--cream); font-family:'DM Sans',sans-serif; font-size:0.88rem; text-align:center; outline:none; transition:border-color 0.2s; -webkit-appearance:none; }
+  .club-yds-input:focus { border-color:var(--gold); }
+  .club-yds-input::placeholder { color:rgba(160,152,128,0.4); font-size:0.76rem; }
+  .save-bag-btn { width:100%; padding:0.95rem; background:linear-gradient(135deg,var(--gold),var(--gold-light)); border:none; border-radius:13px; color:var(--dark); font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; cursor:pointer; margin-top:0.7rem; transition:all 0.22s; touch-action:manipulation; }
+  .save-bag-btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(201,168,76,0.28); }
 
-  @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes fadeUp   { from { opacity: 0; transform: translateY(20px);  } to { opacity: 1; transform: translateY(0); } }
+  /* RESULT */
+  .bag-saved-badge { display:none; align-items:center; gap:0.45rem; background:rgba(90,171,110,0.1); border:1px solid rgba(90,171,110,0.3); border-radius:9px; padding:0.55rem 0.85rem; margin-bottom:1rem; font-size:0.82rem; color:var(--green-bright); font-weight:500; }
+  .bag-saved-badge.show { display:flex; }
+  .no-bag-warning { background:rgba(201,168,76,0.07); border:1px solid rgba(201,168,76,0.25); border-radius:11px; padding:0.85rem 0.95rem; margin-top:0.9rem; font-size:0.84rem; color:var(--gold); display:none; line-height:1.5; }
+  .no-bag-warning.show { display:block; }
+  .no-bag-warning button { background:none; border:none; color:var(--gold); font-family:'DM Sans',sans-serif; font-size:0.84rem; font-weight:700; cursor:pointer; text-decoration:underline; padding:0; }
+
+  .result-card { margin-top:1.4rem; background:rgba(11,22,15,0.95); border:1px solid rgba(201,168,76,0.5); border-radius:20px; padding:1.6rem; display:none; }
+  .result-card.show { display:block; animation:resultPop 0.45s cubic-bezier(0.175,0.885,0.32,1.275) both; }
+  @keyframes resultPop { from{opacity:0;transform:scale(0.93) translateY(12px)} to{opacity:1;transform:scale(1) translateY(0)} }
+  .result-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.1rem; }
+  .result-header h3 { font-size:0.72rem; text-transform:uppercase; letter-spacing:2px; color:var(--cream-dim); font-weight:600; }
+  .confidence-badge { font-size:0.73rem; padding:0.22rem 0.65rem; border-radius:9px; font-weight:600; }
+  .conf-high { background:rgba(90,171,110,0.15); color:var(--green-bright); border:1px solid rgba(90,171,110,0.35); }
+  .conf-mid  { background:rgba(201,168,76,0.15); color:var(--gold); border:1px solid rgba(201,168,76,0.35); }
+  .primary-club { display:flex; align-items:center; gap:1rem; margin-bottom:1.1rem; }
+  .club-icon { width:62px; height:62px; background:linear-gradient(135deg,var(--green-mid),var(--green-light)); border-radius:15px; display:flex; align-items:center; justify-content:center; font-size:1.9rem; flex-shrink:0; border:1px solid rgba(201,168,76,0.2); }
+  .club-name { font-family:'Playfair Display',serif; font-size:1.9rem; font-weight:900; color:var(--gold); line-height:1; }
+  .club-subtitle { color:var(--cream-dim); font-size:0.83rem; margin-top:0.2rem; }
+  .result-divider { height:1px; background:rgba(201,168,76,0.15); margin:0.9rem 0; }
+  .result-tip { font-size:0.88rem; line-height:1.65; color:#b8cfc0; padding:0.75rem 0.85rem; background:rgba(255,255,255,0.025); border-radius:9px; border-left:3px solid var(--gold); }
+  .alt-clubs { margin-top:0.9rem; }
+  .alt-label { font-size:0.7rem; text-transform:uppercase; letter-spacing:1.5px; color:var(--cream-dim); margin-bottom:0.55rem; }
+  .alt-pills { display:flex; flex-wrap:wrap; gap:0.45rem; }
+  .alt-pill { padding:0.32rem 0.85rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.09); border-radius:20px; font-size:0.8rem; color:var(--cream); }
+
+  /* TOAST */
+  .toast { position:fixed; bottom:calc(2rem + var(--safe-bottom)); left:50%; transform:translateX(-50%) translateY(100px); background:var(--green-mid); border:1px solid var(--gold); color:var(--cream); padding:0.75rem 1.4rem; border-radius:11px; font-size:0.86rem; font-weight:500; z-index:999; transition:transform 0.3s cubic-bezier(0.175,0.885,0.32,1.275); white-space:nowrap; }
+  .toast.show { transform:translateX(-50%) translateY(0); }
+
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-18px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeUp   { from{opacity:0;transform:translateY(18px)}  to{opacity:1;transform:translateY(0)} }
 </style>
 </head>
 <body>
 
-<!-- ════ LOGIN ════ -->
-<div id="loginScreen" class="screen active">
-  <div class="logo-wrap">
-    <div class="logo-icon">
-      <svg viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg">
+<!-- ════════════════ PIN SCREEN ════════════════ -->
+<div id="pinScreen" class="screen active">
+  <div class="pin-logo-wrap">
+    <div class="logo-lockup">
+      <div class="logo-text-row">
+        <span class="lt-f">f</span><span class="lt-ai">AI</span><span class="lt-rway">rway</span>
+      </div>
+      <!-- Shot trace underline SVG -->
+      <svg class="logo-trace" viewBox="0 0 260 38" xmlns="http://www.w3.org/2000/svg" fill="none">
         <defs>
-          <radialGradient id="bg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#2d5a3d"/><stop offset="100%" stop-color="#1a3a2a"/></radialGradient>
-          <linearGradient id="gr" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#6ab87a"/><stop offset="100%" stop-color="#4a8c5c"/></linearGradient>
-          <linearGradient id="gl" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#c9a84c"/><stop offset="100%" stop-color="#e8c97a"/></linearGradient>
+          <linearGradient id="traceGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%"   stop-color="#c9a84c" stop-opacity="0"/>
+            <stop offset="20%"  stop-color="#c9a84c" stop-opacity="0.7"/>
+            <stop offset="70%"  stop-color="#e8c97a" stop-opacity="1"/>
+            <stop offset="100%" stop-color="#c9a84c" stop-opacity="0.2"/>
+          </linearGradient>
+          <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%"   stop-color="#5aab6e" stop-opacity="0"/>
+            <stop offset="30%"  stop-color="#5aab6e" stop-opacity="0.5"/>
+            <stop offset="80%"  stop-color="#5aab6e" stop-opacity="0.8"/>
+            <stop offset="100%" stop-color="#5aab6e" stop-opacity="0"/>
+          </linearGradient>
         </defs>
-        <circle cx="55" cy="55" r="52" fill="url(#bg)" stroke="#c9a84c" stroke-width="1.5" opacity="0.6"/>
-        <ellipse cx="55" cy="78" rx="28" ry="7" fill="#1a3a2a" opacity="0.8"/>
-        <ellipse cx="55" cy="76" rx="24" ry="5" fill="#163020"/>
-        <line x1="55" y1="76" x2="55" y2="30" stroke="#c9a84c" stroke-width="2"/>
-        <polygon points="55,30 78,38 55,46" fill="url(#gl)" opacity="0.95"/>
-        <circle cx="55" cy="76" r="7" fill="white"/>
-        <circle cx="53" cy="74" r="1.5" fill="#e0e0e0" opacity="0.6"/>
-        <circle cx="57" cy="73" r="1.2" fill="#e0e0e0" opacity="0.5"/>
-        <circle cx="55" cy="77" r="1" fill="#e0e0e0" opacity="0.5"/>
-        <circle cx="82" cy="28" r="3" fill="url(#gr)" opacity="0.9"/>
-        <circle cx="90" cy="40" r="2" fill="url(#gl)" opacity="0.7"/>
-        <circle cx="76" cy="20" r="2" fill="url(#gl)" opacity="0.6"/>
-        <path d="M30 76 Q27 62 31 58" stroke="url(#gr)" stroke-width="2" fill="none" stroke-linecap="round"/>
-        <path d="M36 75 Q34 63 38 60" stroke="url(#gr)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-        <path d="M74 76 Q77 62 73 59" stroke="url(#gr)" stroke-width="2" fill="none" stroke-linecap="round"/>
-        <path d="M80 75 Q83 64 79 61" stroke="url(#gr)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <!-- ground line -->
+        <line x1="0" y1="32" x2="260" y2="32" stroke="rgba(201,168,76,0.15)" stroke-width="1"/>
+        <!-- shot arc trajectory -->
+        <path d="M 18 31 Q 80 4 155 18 Q 200 26 238 31"
+              stroke="url(#arcGrad)" stroke-width="1.5" stroke-dasharray="4 3" stroke-linecap="round"/>
+        <!-- main trace line -->
+        <path d="M 0 31 Q 60 31 130 31 Q 180 31 238 31"
+              stroke="url(#traceGrad)" stroke-width="2" stroke-linecap="round"/>
+        <!-- tee/start marker -->
+        <circle cx="18" cy="31" r="2.5" fill="#c9a84c" opacity="0.7"/>
+        <!-- golf ball at peak -->
+        <circle cx="155" cy="18" r="5" fill="#ffffff" opacity="0.92"/>
+        <circle cx="153.5" cy="16.5" r="1.2" fill="#d0d0d0" opacity="0.5"/>
+        <circle cx="156.5" cy="16" r="0.9" fill="#d0d0d0" opacity="0.4"/>
+        <circle cx="154" cy="19.5" r="0.8" fill="#d0d0d0" opacity="0.4"/>
+        <!-- landing dot -->
+        <circle cx="238" cy="31" r="3" fill="#c9a84c" opacity="0.6"/>
+        <!-- flag at end -->
+        <line x1="238" y1="31" x2="238" y2="14" stroke="#c9a84c" stroke-width="1.5" opacity="0.7"/>
+        <polygon points="238,14 250,18 238,22" fill="#c9a84c" opacity="0.8"/>
+        <!-- dotted distance markers -->
+        <line x1="80"  y1="29" x2="80"  y2="34" stroke="rgba(201,168,76,0.3)" stroke-width="1"/>
+        <line x1="160" y1="29" x2="160" y2="34" stroke="rgba(201,168,76,0.3)" stroke-width="1"/>
       </svg>
+      <div class="logo-tagline">Smart Club Selection · On the Course</div>
     </div>
-    <div class="logo-title"><span class="f">f</span><span class="ai">AI</span><span class="rway">rway</span></div>
-    <div class="logo-tagline">Smart Club Selection · On the Course</div>
   </div>
-  <div class="login-card">
-    <h2>Who's playing?</h2>
-    <p>Select your profile to get started</p>
-    <button class="player-btn" onclick="login('conor')">
-      <div class="avatar" style="background:linear-gradient(135deg,#1e4d32,#3d8c5a);color:var(--gold-light)">C</div>
-      <div class="info"><span class="name">Conor McDaid</span><span class="role">Player 1</span></div>
-      <span class="chevron">›</span>
-    </button>
-    <button class="player-btn" onclick="login('cathal')">
-      <div class="avatar" style="background:linear-gradient(135deg,#2d1e4d,#6a3d8c);color:var(--gold-light)">C</div>
-      <div class="info"><span class="name">Cathal McDaid</span><span class="role">Player 2</span></div>
-      <span class="chevron">›</span>
-    </button>
+
+  <div class="pin-card" id="pinCard">
+    <div class="pin-player-name" id="pinPlayerName">Select Player</div>
+    <div class="pin-sub" id="pinSub">Choose your profile below</div>
+
+    <!-- Player selector (shown first) -->
+    <div id="pinPlayerSelect">
+      <button class="player-btn" onclick="selectPinPlayer('conor')" style="margin-bottom:0.7rem">
+        <div class="avatar" style="background:linear-gradient(135deg,#1a3d24,#2d6640);color:var(--gold-light)">C</div>
+        <div class="info"><span class="name">Conor McDaid</span><span class="role">Player 1</span></div>
+        <span class="chevron">›</span>
+      </button>
+      <button class="player-btn" onclick="selectPinPlayer('cathal')">
+        <div class="avatar" style="background:linear-gradient(135deg,#221a3d,#4a2d6e);color:var(--gold-light)">C</div>
+        <div class="info"><span class="name">Cathal McDaid</span><span class="role">Player 2</span></div>
+        <span class="chevron">›</span>
+      </button>
+    </div>
+
+    <!-- PIN entry (shown after player selected) -->
+    <div id="pinEntry" style="display:none">
+      <div class="pin-dots" id="pinDots">
+        <div class="pin-dot" id="pd0"></div>
+        <div class="pin-dot" id="pd1"></div>
+        <div class="pin-dot" id="pd2"></div>
+        <div class="pin-dot" id="pd3"></div>
+      </div>
+      <div class="pin-pad">
+        <button class="pin-key" onclick="pinPress('1')">1</button>
+        <button class="pin-key" onclick="pinPress('2')">2</button>
+        <button class="pin-key" onclick="pinPress('3')">3</button>
+        <button class="pin-key" onclick="pinPress('4')">4</button>
+        <button class="pin-key" onclick="pinPress('5')">5</button>
+        <button class="pin-key" onclick="pinPress('6')">6</button>
+        <button class="pin-key" onclick="pinPress('7')">7</button>
+        <button class="pin-key" onclick="pinPress('8')">8</button>
+        <button class="pin-key" onclick="pinPress('9')">9</button>
+        <button class="pin-key del" onclick="pinDel()">⌫</button>
+        <button class="pin-key zero" onclick="pinPress('0')">0</button>
+      </div>
+      <button class="pin-back-btn" onclick="backToPlayerSelect()">← Change player</button>
+    </div>
   </div>
 </div>
 
-<!-- ════ APP ════ -->
+<!-- ════════════════ APP ════════════════ -->
 <div id="appScreen" class="screen">
   <div class="top-bar">
     <div class="top-logo"><span class="f">f</span><span class="ai">AI</span><span class="rway">rway</span></div>
@@ -210,20 +381,18 @@
         <span id="playerChipName"></span>
       </div>
       <button class="icon-btn" onclick="switchTab('bag')" title="My Bag">🎒</button>
-      <button class="logout-btn" onclick="logout()">← Back</button>
+      <button class="logout-btn" onclick="logout()">← Exit</button>
     </div>
   </div>
 
   <div class="main-content">
-
     <div class="tabs">
-      <button class="tab-btn active" id="tab-btn-advisor" onclick="switchTab('advisor')">🎯 Advisor</button>
+      <button class="tab-btn active" id="tab-btn-advisor" onclick="switchTab('advisor')">🏌️ Club Choice</button>
       <button class="tab-btn"        id="tab-btn-bag"     onclick="switchTab('bag')">🎒 My Bag</button>
     </div>
 
-    <!-- ── ADVISOR TAB ── -->
+    <!-- ── CLUB CHOICE TAB ── -->
     <div id="tab-advisor">
-
       <div class="bag-saved-badge" id="bagActiveBadge">
         <span>✅</span><span id="bagBadgeText">Using your saved yardages</span>
       </div>
@@ -307,8 +476,8 @@
       <button class="recommend-btn" onclick="getRecommendation()">⛳ Get Club Recommendation</button>
 
       <div class="no-bag-warning" id="noBagWarning">
-        ⚠️ No yardages saved yet — using generic averages.<br>
-        <button onclick="switchTab('bag')">Set up your bag →</button>
+        ⚠️ No yardages saved yet — using generic averages.
+        <br><button onclick="switchTab('bag')">Set up your bag →</button>
       </div>
 
       <div class="result-card" id="resultCard">
@@ -332,96 +501,129 @@
       </div>
     </div>
 
-    <!-- ── BAG TAB ── -->
+    <!-- ── MY BAG TAB ── -->
     <div id="tab-bag" style="display:none">
-
       <div class="section-title">🎒 My Bag</div>
-      <p class="section-sub">Enter your average carry distance for each club. Leave blank to skip that club. Saved per player — only used for you.</p>
-
-      <div class="bag-intro">
-        <strong>💡 Tip:</strong> Enter your <em>carry</em> distance (not total with roll). These are saved to your device and used to give you personalised recommendations on the Advisor tab.
-      </div>
-
+      <p class="section-sub">Enter your average carry distance for each club. Leave blank to skip. Saved per player.</p>
+      <div class="bag-intro"><strong>💡 Tip:</strong> Enter your <em>carry</em> distance (not total with roll). These numbers are saved only on your device.</div>
       <div id="bagClubList"></div>
-
       <button class="save-bag-btn" onclick="saveBag()">💾 Save My Yardages</button>
     </div>
-
-  </div><!-- /main-content -->
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════
-//  CLUB DEFINITIONS
-// ══════════════════════════════════════════
-const CLUB_DEFS = [
-  { id: 'driver',  name: 'Driver',      icon: '🏌️', defaultCarry: 250 },
-  { id: 'w3',      name: '3 Wood',      icon: '🌳', defaultCarry: 215 },
-  { id: 'w5',      name: '5 Wood',      icon: '🌿', defaultCarry: 195 },
-  { id: 'i3',      name: '3 Iron',      icon: '⛳', defaultCarry: 185 },
-  { id: 'i4',      name: '4 Iron',      icon: '⛳', defaultCarry: 175 },
-  { id: 'i5',      name: '5 Iron',      icon: '⛳', defaultCarry: 165 },
-  { id: 'i6',      name: '6 Iron',      icon: '⛳', defaultCarry: 155 },
-  { id: 'i7',      name: '7 Iron',      icon: '⛳', defaultCarry: 145 },
-  { id: 'i8',      name: '8 Iron',      icon: '⛳', defaultCarry: 130 },
-  { id: 'i9',      name: '9 Iron',      icon: '⛳', defaultCarry: 115 },
-  { id: 'pw',      name: 'PW',          icon: '🔨', defaultCarry: 100 },
-  { id: 'gw',      name: 'GW / AW',    icon: '🔨', defaultCarry: 85  },
-  { id: 'sw',      name: 'Sand Wedge', icon: '🏖️', defaultCarry: 65  },
-  { id: 'lw',      name: 'Lob Wedge',  icon: '🎯', defaultCarry: 45  },
-];
+// ── PINS (change these to whatever 4-digit codes you want) ──
+const PINS = { conor: '1234', cathal: '5678' };
 
-// ══════════════════════════════════════════
-//  PLAYER STATE
-// ══════════════════════════════════════════
 const PLAYERS = {
-  conor:  { name: 'Conor McDaid',  short: 'Conor',  color: '#6ab87a' },
-  cathal: { name: 'Cathal McDaid', short: 'Cathal', color: '#a084dc' }
+  conor:  { name:'Conor McDaid',  short:'Conor',  color:'#5aab6e' },
+  cathal: { name:'Cathal McDaid', short:'Cathal', color:'#a084dc' }
 };
+
 let currentPlayer = null;
+let pinTarget     = null;
+let pinEntered    = '';
 
-function storageKey(pid) { return 'fairway_bag_' + pid; }
-
-function loadBag(pid) {
-  try {
-    const saved = localStorage.getItem(storageKey(pid));
-    return saved ? JSON.parse(saved) : {};
-  } catch(e) { return {}; }
+// ── PIN FLOW ──
+function selectPinPlayer(pid) {
+  pinTarget  = pid;
+  pinEntered = '';
+  document.getElementById('pinPlayerName').textContent = PLAYERS[pid].name;
+  document.getElementById('pinSub').textContent        = 'Enter your 4-digit PIN';
+  document.getElementById('pinPlayerSelect').style.display = 'none';
+  document.getElementById('pinEntry').style.display         = 'block';
+  renderDots();
 }
 
-function hasBagData(pid) {
-  const bag = loadBag(pid);
-  return CLUB_DEFS.some(c => bag[c.id] > 0);
+function backToPlayerSelect() {
+  pinTarget  = null;
+  pinEntered = '';
+  document.getElementById('pinPlayerName').textContent = 'Select Player';
+  document.getElementById('pinSub').textContent        = 'Choose your profile below';
+  document.getElementById('pinPlayerSelect').style.display = 'block';
+  document.getElementById('pinEntry').style.display         = 'none';
+  renderDots();
 }
 
-// ══════════════════════════════════════════
-//  AUTH
-// ══════════════════════════════════════════
-function login(pid) {
+function pinPress(d) {
+  if (pinEntered.length >= 4) return;
+  pinEntered += d;
+  renderDots();
+  if (pinEntered.length === 4) setTimeout(checkPin, 120);
+}
+
+function pinDel() {
+  pinEntered = pinEntered.slice(0, -1);
+  renderDots();
+}
+
+function renderDots() {
+  for (let i = 0; i < 4; i++) {
+    const dot = document.getElementById('pd'+i);
+    dot.classList.toggle('filled', i < pinEntered.length);
+    dot.classList.remove('error');
+  }
+}
+
+function checkPin() {
+  if (pinEntered === PINS[pinTarget]) {
+    completeLogin(pinTarget);
+  } else {
+    for (let i = 0; i < 4; i++) {
+      const d = document.getElementById('pd'+i);
+      d.classList.remove('filled');
+      d.classList.add('error');
+    }
+    document.getElementById('pinCard').classList.add('pin-shake');
+    setTimeout(() => {
+      document.getElementById('pinCard').classList.remove('pin-shake');
+      pinEntered = '';
+      renderDots();
+    }, 500);
+  }
+}
+
+function completeLogin(pid) {
   currentPlayer = pid;
   const p = PLAYERS[pid];
-  document.getElementById('playerDot').style.background = p.color;
-  document.getElementById('playerChipName').textContent = p.short;
+  document.getElementById('playerDot').style.background   = p.color;
+  document.getElementById('playerChipName').textContent   = p.short;
   show('appScreen');
   switchTab('advisor');
   resetAdvisorForm();
 }
 
-function logout() { currentPlayer = null; show('loginScreen'); }
+function logout() {
+  currentPlayer = null;
+  pinTarget     = null;
+  pinEntered    = '';
+  backToPlayerSelect();
+  show('pinScreen');
+}
 
 function show(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
+// ── TABS ──
+function switchTab(name) {
+  ['advisor','bag'].forEach(t => {
+    document.getElementById('tab-'+t).style.display = t===name ? 'block' : 'none';
+    document.getElementById('tab-btn-'+t).classList.toggle('active', t===name);
+  });
+  if (name === 'bag') buildBagForm();
+}
+
 function resetAdvisorForm() {
-  document.getElementById('distance').value = '';
+  document.getElementById('distance').value  = '';
   document.getElementById('windSpeed').value = '';
-  document.getElementById('windDir').value = 'none';
+  document.getElementById('windDir').value   = 'none';
   ['elevation','lie','shape','hazard','greenPos'].forEach(g => {
-    document.querySelectorAll('#'+g+' .toggle-pill').forEach((b,i) => b.classList.toggle('active', i===0));
+    document.querySelectorAll('#'+g+' .toggle-pill').forEach((b,i) => b.classList.toggle('active',i===0));
   });
   document.getElementById('resultCard').classList.remove('show');
   updateBagBadge();
@@ -429,180 +631,156 @@ function resetAdvisorForm() {
 
 function updateBagBadge() {
   const has = hasBagData(currentPlayer);
-  const badge = document.getElementById('bagActiveBadge');
-  const warn  = document.getElementById('noBagWarning');
-  badge.classList.toggle('show', has);
-  // warn only shows after a failed recommendation attempt — handled in getRecommendation
-  if (has) warn.classList.remove('show');
+  document.getElementById('bagActiveBadge').classList.toggle('show', has);
+  if (has) document.getElementById('noBagWarning').classList.remove('show');
 }
 
-// ══════════════════════════════════════════
-//  TABS
-// ══════════════════════════════════════════
-function switchTab(name) {
-  ['advisor','bag'].forEach(t => {
-    document.getElementById('tab-'+t).style.display = t === name ? 'block' : 'none';
-    document.getElementById('tab-btn-'+t).classList.toggle('active', t === name);
-  });
-  if (name === 'bag') buildBagForm();
-}
+// ── BAG STORAGE ──
+const CLUB_DEFS = [
+  {id:'driver',name:'Driver',     icon:'🏌️',defaultCarry:250},
+  {id:'w3',    name:'3 Wood',     icon:'🌳',defaultCarry:215},
+  {id:'w5',    name:'5 Wood',     icon:'🌿',defaultCarry:195},
+  {id:'i3',    name:'3 Iron',     icon:'⛳',defaultCarry:185},
+  {id:'i4',    name:'4 Iron',     icon:'⛳',defaultCarry:175},
+  {id:'i5',    name:'5 Iron',     icon:'⛳',defaultCarry:165},
+  {id:'i6',    name:'6 Iron',     icon:'⛳',defaultCarry:155},
+  {id:'i7',    name:'7 Iron',     icon:'⛳',defaultCarry:145},
+  {id:'i8',    name:'8 Iron',     icon:'⛳',defaultCarry:130},
+  {id:'i9',    name:'9 Iron',     icon:'⛳',defaultCarry:115},
+  {id:'pw',    name:'PW',         icon:'🔨',defaultCarry:100},
+  {id:'gw',    name:'GW / AW',   icon:'🔨',defaultCarry:85},
+  {id:'sw',    name:'Sand Wedge',icon:'🏖️',defaultCarry:65},
+  {id:'lw',    name:'Lob Wedge', icon:'🎯',defaultCarry:45},
+];
 
-// ══════════════════════════════════════════
-//  BAG FORM
-// ══════════════════════════════════════════
+function storageKey(pid) { return 'fairway_bag_'+pid; }
+function loadBag(pid) { try { const s=localStorage.getItem(storageKey(pid)); return s?JSON.parse(s):{} } catch(e){return{}} }
+function hasBagData(pid) { const b=loadBag(pid); return CLUB_DEFS.some(c=>b[c.id]>0); }
+
 function buildBagForm() {
-  const bag = loadBag(currentPlayer);
+  const bag  = loadBag(currentPlayer);
   const list = document.getElementById('bagClubList');
   list.innerHTML = '';
   CLUB_DEFS.forEach(c => {
-    const saved = bag[c.id] || '';
-    const row = document.createElement('div');
+    const saved = bag[c.id]||'';
+    const row   = document.createElement('div');
     row.className = 'club-row';
     row.innerHTML =
-      '<div class="club-row-label"><span class="club-emoji">'+c.icon+'</span>'+c.name+'</div>' +
-      '<div class="input-wrap" style="width:auto">' +
-        '<input class="club-yds-input" type="number" id="bag_'+c.id+'" ' +
-               'placeholder="yds" min="10" max="400" inputmode="numeric" ' +
-               'value="'+(saved || '')+'">' +
-      '</div>';
+      '<div class="club-row-label"><span class="club-emoji">'+c.icon+'</span>'+c.name+'</div>'+
+      '<input class="club-yds-input" type="number" id="bag_'+c.id+'" placeholder="yds" min="10" max="400" inputmode="numeric" value="'+(saved||'')+'">';
     list.appendChild(row);
   });
 }
 
 function saveBag() {
-  const bag = {};
-  let count = 0;
+  const bag = {}; let count = 0;
   CLUB_DEFS.forEach(c => {
     const v = parseInt(document.getElementById('bag_'+c.id).value);
-    if (!isNaN(v) && v > 0) { bag[c.id] = v; count++; }
+    if (!isNaN(v)&&v>0) { bag[c.id]=v; count++; }
   });
   localStorage.setItem(storageKey(currentPlayer), JSON.stringify(bag));
-  showToast('✅ ' + count + ' clubs saved for ' + PLAYERS[currentPlayer].short);
+  showToast('✅ '+count+' clubs saved for '+PLAYERS[currentPlayer].short);
   updateBagBadge();
-  // bounce back to advisor
-  setTimeout(() => switchTab('advisor'), 600);
+  setTimeout(()=>switchTab('advisor'), 600);
 }
 
-// ══════════════════════════════════════════
-//  BUILD CLUB LIST FROM BAG (or defaults)
-// ══════════════════════════════════════════
 function getActiveClubs() {
-  const bag = loadBag(currentPlayer);
-  const hasAny = CLUB_DEFS.some(c => bag[c.id] > 0);
-  return CLUB_DEFS
-    .map(c => {
-      const carry = hasAny ? (bag[c.id] || null) : c.defaultCarry;
-      if (!carry) return null;
-      // tolerance band: ±8% of carry
-      const tol = Math.round(carry * 0.08);
-      return { name: c.name, icon: c.icon, carry: carry, low: carry - tol, high: carry + tol, type: c.id.startsWith('w') ? 'wood' : c.id.startsWith('i') ? 'iron' : 'wedge' };
-    })
-    .filter(Boolean);
+  const bag    = loadBag(currentPlayer);
+  const hasAny = CLUB_DEFS.some(c=>bag[c.id]>0);
+  return CLUB_DEFS.map(c=>{
+    const carry = hasAny?(bag[c.id]||null):c.defaultCarry;
+    if (!carry) return null;
+    const tol = Math.round(carry*0.08);
+    return {id:c.id,name:c.name,icon:c.icon,carry,low:carry-tol,high:carry+tol,
+            type:c.id.startsWith('w')?'wood':c.id.startsWith('i')?'iron':'wedge'};
+  }).filter(Boolean);
 }
 
-// ══════════════════════════════════════════
-//  TOGGLE PILLS
-// ══════════════════════════════════════════
-function togglePill(el, group) {
-  document.querySelectorAll('#'+group+' .toggle-pill').forEach(p => p.classList.remove('active'));
+// ── TOGGLE PILLS ──
+function togglePill(el,group){
+  document.querySelectorAll('#'+group+' .toggle-pill').forEach(p=>p.classList.remove('active'));
   el.classList.add('active');
 }
-function getToggleVal(group) {
-  const a = document.querySelector('#'+group+' .toggle-pill.active');
-  return a ? a.dataset.val : null;
+function getToggleVal(group){
+  const a=document.querySelector('#'+group+' .toggle-pill.active');
+  return a?a.dataset.val:null;
 }
 
-// ══════════════════════════════════════════
-//  RECOMMENDATION ENGINE
-// ══════════════════════════════════════════
-function getRecommendation() {
-  const dist = parseInt(document.getElementById('distance').value);
-  if (!dist || dist < 5 || dist > 400) { showToast('⚠️ Enter a valid distance (5–400 yds)'); return; }
+// ── RECOMMENDATION ENGINE ──
+function getRecommendation(){
+  const dist=parseInt(document.getElementById('distance').value);
+  if(!dist||dist<5||dist>400){showToast('⚠️ Enter a valid distance (5–400 yds)');return;}
+  const windSpd =parseInt(document.getElementById('windSpeed').value)||0;
+  const windDir =document.getElementById('windDir').value;
+  const elev    =getToggleVal('elevation');
+  const lie     =getToggleVal('lie');
+  const shape   =getToggleVal('shape');
+  const hazard  =getToggleVal('hazard');
+  const greenPos=getToggleVal('greenPos');
+  const hasPersonal=hasBagData(currentPlayer);
+  document.getElementById('noBagWarning').classList.toggle('show',!hasPersonal);
 
-  const windSpd  = parseInt(document.getElementById('windSpeed').value) || 0;
-  const windDir  = document.getElementById('windDir').value;
-  const elev     = getToggleVal('elevation');
-  const lie      = getToggleVal('lie');
-  const shape    = getToggleVal('shape');
-  const hazard   = getToggleVal('hazard');
-  const greenPos = getToggleVal('greenPos');
+  let adj=dist;
+  if(windDir==='headwind')  adj+=Math.round(windSpd*0.9);
+  if(windDir==='tailwind')  adj-=Math.round(windSpd*0.7);
+  if(windDir==='crosswind') adj+=Math.round(windSpd*0.3);
+  if(elev==='uphill')   adj+=Math.round(dist*0.08);
+  if(elev==='downhill') adj-=Math.round(dist*0.06);
+  if(lie==='rough')  adj+=Math.round(dist*0.07);
+  if(lie==='bunker') adj+=Math.round(dist*0.10);
+  if(greenPos==='back')  adj+=5;
+  if(greenPos==='front') adj-=5;
 
-  // Show warning if no personal bag saved
-  const hasPersonal = hasBagData(currentPlayer);
-  document.getElementById('noBagWarning').classList.toggle('show', !hasPersonal);
+  let hazardNote='';
+  if(hazard==='water')       {hazardNote='💧 Water ahead — take one extra club for a safe carry.';adj+=8;}
+  if(hazard==='trees')        hazardNote='🌲 Trees in play — consider a punch shot with lower ball flight.';
+  if(hazard==='bunker-front'){hazardNote='🏖️ Front bunker — carry it fully, take the extra club.';adj+=8;}
 
-  let adj = dist;
-  if (windDir === 'headwind')  adj += Math.round(windSpd * 0.9);
-  if (windDir === 'tailwind')  adj -= Math.round(windSpd * 0.7);
-  if (windDir === 'crosswind') adj += Math.round(windSpd * 0.3);
-  if (elev === 'uphill')   adj += Math.round(dist * 0.08);
-  if (elev === 'downhill') adj -= Math.round(dist * 0.06);
-  if (lie === 'rough')  adj += Math.round(dist * 0.07);
-  if (lie === 'bunker') adj += Math.round(dist * 0.10);
-  if (greenPos === 'back')  adj += 5;
-  if (greenPos === 'front') adj -= 5;
+  const clubs  =getActiveClubs();
+  const matches=clubs.filter(c=>adj>=c.low&&adj<=c.high);
+  const primary=matches[0]||clubs.reduce((b,c)=>Math.abs(c.carry-adj)<Math.abs(b.carry-adj)?c:b);
+  const alts   =matches.length>1?matches.slice(1,4):[];
+  const conf   =matches.length>=2?'high':matches.length===1?'medium':'low';
 
-  let hazardNote = '';
-  if (hazard === 'water')        { hazardNote = '💧 Water ahead — take one extra club for a safe carry.'; adj += 8; }
-  if (hazard === 'trees')          hazardNote = '🌲 Trees in play — consider a punch shot with lower ball flight.';
-  if (hazard === 'bunker-front') { hazardNote = '🏖️ Front bunker — carry it fully, take the extra club.'; adj += 8; }
+  document.getElementById('clubName').textContent    =primary.name;
+  document.getElementById('clubIcon').textContent    =primary.icon;
+  document.getElementById('clubSubtitle').textContent=(hasPersonal?'Your carry: '+primary.carry:'Avg carry: ~'+primary.carry)+' yds · adj. '+adj+' yds';
+  document.getElementById('resultTip').textContent   =buildTip(primary,dist,adj,windSpd,windDir,elev,lie,shape,hazardNote,hasPersonal);
 
-  const clubs   = getActiveClubs();
-  const matches = clubs.filter(c => adj >= c.low && adj <= c.high);
+  const badge=document.getElementById('confBadge');
+  badge.textContent=conf==='high'?'✓ High Confidence':conf==='medium'?'~ Good Match':'↔ Nearest Club';
+  badge.className='confidence-badge '+(conf==='high'?'conf-high':'conf-mid');
 
-  // If no match in band, find closest by carry distance
-  const primary = matches[0] || clubs.reduce((b, c) => Math.abs(c.carry - adj) < Math.abs(b.carry - adj) ? c : b);
-  const alts    = matches.length > 1 ? matches.slice(1, 4) : [];
-  const conf    = matches.length >= 2 ? 'high' : matches.length === 1 ? 'medium' : 'low';
+  document.getElementById('altPills').innerHTML=alts.length
+    ?alts.map(c=>'<span class="alt-pill">'+c.icon+' '+c.name+' ('+c.carry+'yds)</span>').join('')
+    :'<span style="color:var(--cream-dim);font-size:0.78rem">No alternatives in range</span>';
 
-  document.getElementById('clubName').textContent     = primary.name;
-  document.getElementById('clubIcon').textContent     = primary.icon;
-  document.getElementById('clubSubtitle').textContent =
-    (hasPersonal ? 'Your carry: ' + primary.carry : 'Avg carry: ~' + primary.carry) + ' yds · adj. ' + adj + ' yds';
-  document.getElementById('resultTip').textContent    = buildTip(primary, dist, adj, windSpd, windDir, elev, lie, shape, hazardNote, hasPersonal);
-
-  const badge = document.getElementById('confBadge');
-  badge.textContent = conf === 'high' ? '✓ High Confidence' : conf === 'medium' ? '~ Good Match' : '↔ Nearest Club';
-  badge.className   = 'confidence-badge ' + (conf === 'high' ? 'conf-high' : 'conf-mid');
-
-  document.getElementById('altPills').innerHTML = alts.length
-    ? alts.map(c => '<span class="alt-pill">'+c.icon+' '+c.name+' ('+c.carry+'yds)</span>').join('')
-    : '<span style="color:var(--text-muted);font-size:0.8rem">No alternatives in range</span>';
-
-  const card = document.getElementById('resultCard');
-  card.classList.remove('show');
-  void card.offsetWidth;
-  card.classList.add('show');
-  setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 80);
+  const card=document.getElementById('resultCard');
+  card.classList.remove('show'); void card.offsetWidth; card.classList.add('show');
+  setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'nearest'}),80);
 }
 
-function buildTip(club, orig, adj, windSpd, windDir, elev, lie, shape, hazardNote, hasPersonal) {
-  const tips = [];
-  if (hazardNote) tips.push(hazardNote);
-  if (windDir === 'headwind' && windSpd >= 10) tips.push('🌬️ '+windSpd+'mph headwind adds ~'+(adj-orig)+' yds — commit to the extra club.');
-  if (windDir === 'tailwind' && windSpd >= 10) tips.push('🌬️ '+windSpd+'mph tailwind — you can comfortably club down.');
-  if (windDir === 'crosswind' && windSpd >= 8) tips.push('↔️ Crosswind — aim into the breeze and let it bring the ball back.');
-  if (elev === 'uphill')   tips.push('⬆️ Uphill — ball lands shorter, take an extra club.');
-  if (elev === 'downhill') tips.push('⬇️ Downhill — extra run-out expected, consider one less club.');
-  if (lie === 'rough')     tips.push('🌿 Rough lie — reduced spin, grip firmly and club up one.');
-  if (lie === 'bunker')    tips.push('🏖️ Bunker — open stance and face, accelerate through impact.');
-  if (shape === 'draw')    tips.push('↩️ Draw — ball will run on landing, aim slightly right of target.');
-  if (shape === 'fade')    tips.push('↪️ Fade — softer landing, aim slightly left of target.');
-  if (!hasPersonal)        tips.push('📌 Set up your bag with your own yardages for a more precise recommendation.');
-  if (club.id && (club.id === 'sw' || club.id === 'lw') && orig <= 80)
-    tips.push('🎯 Short game — smooth tempo beats hard swing, let the loft do the work.');
-  if (!tips.length) tips.push('✅ Clean conditions — trust the '+club.name+' and make a confident, full swing.');
+function buildTip(club,orig,adj,windSpd,windDir,elev,lie,shape,hazardNote,hasPersonal){
+  const tips=[];
+  if(hazardNote) tips.push(hazardNote);
+  if(windDir==='headwind'&&windSpd>=10) tips.push('🌬️ '+windSpd+'mph headwind adds ~'+(adj-orig)+' yds — commit to the extra club.');
+  if(windDir==='tailwind'&&windSpd>=10) tips.push('🌬️ '+windSpd+'mph tailwind — you can comfortably club down.');
+  if(windDir==='crosswind'&&windSpd>=8) tips.push('↔️ Crosswind — aim into the breeze and let it bring the ball back.');
+  if(elev==='uphill')   tips.push('⬆️ Uphill — ball lands shorter, take an extra club.');
+  if(elev==='downhill') tips.push('⬇️ Downhill — extra run-out expected, consider one less club.');
+  if(lie==='rough')     tips.push('🌿 Rough lie — reduced spin, grip firmly and club up one.');
+  if(lie==='bunker')    tips.push('🏖️ Bunker — open stance and face, accelerate through impact.');
+  if(shape==='draw')    tips.push('↩️ Draw — ball will run on landing, aim slightly right of target.');
+  if(shape==='fade')    tips.push('↪️ Fade — softer landing, aim slightly left of target.');
+  if(!hasPersonal)      tips.push('📌 Set up your bag with your own yardages for a more precise recommendation.');
+  if(!tips.length)      tips.push('✅ Clean conditions — trust the '+club.name+' and make a confident, full swing.');
   return tips.join('  ');
 }
 
-// ══════════════════════════════════════════
-//  TOAST
-// ══════════════════════════════════════════
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
 }
 </script>
 </body>
